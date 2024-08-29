@@ -3340,7 +3340,14 @@ func (c *IamClient) KeystoneCreateAgencyToken(request *model.KeystoneCreateAgenc
 	if resp, err := c.HcClient.Sync(request, requestDef); err != nil {
 		return nil, err
 	} else {
-		return resp.(*model.KeystoneCreateAgencyTokenResponse), nil
+		response := resp.(*model.KeystoneCreateAgencyTokenResponse)
+		for i, catalogItem := range *response.Token.Catalog {
+			if catalogItem.Name == "KMS" && catalogItem.Type == "KMS" {
+				(*response.Token.Catalog)[i].Name = "key-management"
+				(*response.Token.Catalog)[i].Type = "kms"
+			}
+		}
+		return response, nil
 	}
 }
 
@@ -3368,7 +3375,14 @@ func (c *IamClient) KeystoneCreateUserTokenByPassword(request *model.KeystoneCre
 	if resp, err := c.HcClient.Sync(request, requestDef); err != nil {
 		return nil, err
 	} else {
-		return resp.(*model.KeystoneCreateUserTokenByPasswordResponse), nil
+		response := resp.(*model.KeystoneCreateUserTokenByPasswordResponse)
+		for i, catalogItem := range response.Token.Catalog {
+			if catalogItem.Name == "KMS" && catalogItem.Type == "KMS" {
+				(response.Token.Catalog)[i].Name = "key-management"
+				(response.Token.Catalog)[i].Type = "kms"
+			}
+		}
+		return response, nil
 	}
 }
 
